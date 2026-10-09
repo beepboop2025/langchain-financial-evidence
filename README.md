@@ -15,20 +15,22 @@ use your own provider and may incur charges.
 
 Python 3.10+ and `langchain-core` 1.6.6 through 1.x are supported.
 
-From this directory, including before registry publication:
+Install the published release from PyPI:
+
+```sh
+python -m pip install langchain-financial-evidence==0.1.0
+```
+
+For development, install from a checkout of this repository:
 
 ```sh
 python -m pip install .
 ```
 
-Once the release is published on PyPI, the registry install is:
-
-```sh
-python -m pip install langchain-financial-evidence
-```
-
-Package publication and acceptance into LangChain's integration catalog are
-separate steps. This README does not claim that a listing has been accepted.
+Version [0.1.0 is available on PyPI](https://pypi.org/project/langchain-financial-evidence/0.1.0/).
+The [LangChain integration listing request](https://github.com/langchain-ai/docs/issues/6593)
+has been submitted and is pending maintainer review. Catalog acceptance is not
+yet established.
 
 ## First cited result
 
