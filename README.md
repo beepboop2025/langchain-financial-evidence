@@ -6,7 +6,8 @@ Native, read-only LangChain tools for public financial research from **Seiche**
 source-health and China publication-coverage datasets. Coverage is finite and
 some fields are unavailable or restricted.
 
-This standalone package calls the public Financial Evidence API. It does not
+This standalone package calls the free hosted Financial Evidence API at
+`agents.seiche.info`. It does not
 depend on the separate `financial-evidence` distribution. No data API key or
 model account is required to invoke these tools. Model calls, if you add them,
 use your own provider and may incur charges.
@@ -18,7 +19,7 @@ Python 3.10+ and `langchain-core` 1.6.6 through 1.x are supported.
 Install the published release from PyPI:
 
 ```sh
-python -m pip install langchain-financial-evidence==0.1.0
+python -m pip install --upgrade langchain-financial-evidence
 ```
 
 For development, install from a checkout of this repository:
@@ -27,10 +28,24 @@ For development, install from a checkout of this repository:
 python -m pip install .
 ```
 
-Version [0.1.0 is available on PyPI](https://pypi.org/project/langchain-financial-evidence/0.1.0/).
+Package releases are listed on [PyPI](https://pypi.org/project/langchain-financial-evidence/).
 The [LangChain integration listing request](https://github.com/langchain-ai/docs/issues/6593)
 has been submitted and is pending maintainer review. Catalog acceptance is not
 yet established.
+
+### Upgrade from 0.1.0
+
+Version 0.1.1 moves all three tools to the central hosted API. Upgrade and
+restart the Python process that runs your agent:
+
+```sh
+python -m pip install --upgrade 'langchain-financial-evidence>=0.1.1,<0.2'
+```
+
+Tool names, arguments and returned evidence schemas remain compatible. Version
+0.1.0 installations and previously downloaded artifacts retain their original
+native endpoint; they change only when their operator upgrades. Version 0.1.1
+does not fall back to that endpoint when the central service is unavailable.
 
 ## First cited result
 
@@ -94,11 +109,19 @@ should receive error text instead. Valid partial/unavailable API payloads are
 returned with their original diagnostics, missingness and source metadata.
 
 Each call makes one GET request to a fixed route under
-`https://api.seiche.info/openbb/api/v1/`. Redirects and automatic retries are
+`https://agents.seiche.info/v1/research/api/v1/`. Redirects, automatic retries,
+native-origin fallback and local response caching are
 disabled. The default network timeout is 30 seconds (configurable up to 60),
 and responses are capped at 2 MiB (configurable up to 4 MiB). Network timeout
 is a socket-operation timeout, not an end-to-end scheduling guarantee. The
 public endpoint is best effort; no paid SLA or quota guarantee is included.
+
+The hosted service records operational dataset demand, outcomes and bounded
+request metadata for up to 30 days. It does not retain private query selectors,
+response documents or model prompts in that demand report. These public tools
+send only the documented research filters and do not send your agent's chat
+history. Usage does not enroll an agent in optional training or grant data
+resale permission. See the [hosted service privacy notice](https://agents.seiche.info/privacy).
 
 ## Evidence and data-use boundaries
 
@@ -123,7 +146,7 @@ and original-publisher links returned in evidence.
 ```sh
 python -m pip install '.[test]'
 pytest tests/unit_tests --disable-socket --allow-unix-socket
-# Optional: five bounded public calls, no LLM cost.
+# Optional: bounded public calls labeled synthetic, no LLM cost.
 FINANCIAL_EVIDENCE_LIVE_TEST=1 pytest tests/integration_tests
 ```
 
